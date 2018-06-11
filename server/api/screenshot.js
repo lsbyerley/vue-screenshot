@@ -35,7 +35,6 @@ router.get('/screenshot/:url?/:viewportSize?/:fullPage?', async (req, res, next)
     // Catch ad scripts and block them
     await page.setRequestInterception(true);
     page.on('request', (interceptedRequest) => {
-      //console.log(interceptedRequest)
       const reqUrl = interceptedRequest.url()
       if ( isAdUrl(reqUrl) ) {
         blockedReqs.push(reqUrl)
@@ -47,10 +46,8 @@ router.get('/screenshot/:url?/:viewportSize?/:fullPage?', async (req, res, next)
 
     await page.setViewport({ width: width, height: height });
     await page.goto(url, { waitUntil: "networkidle0", timeout: 10000 });
-    console.log('page gone too')
     const screenshot = await page.screenshot({ fullPage: fullPage });
     await browserPagePool.release(page);
-    console.log('page released')
 
     return res.status(200).json(screenshot);
 
