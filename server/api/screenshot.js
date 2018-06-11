@@ -32,6 +32,7 @@ router.get('/screenshot/:url?/:viewportSize?/:fullPage?', async (req, res, next)
 
     let blockedReqs = []
     // TODO: When requesting the same url 3 times, unhandled promise rejection
+    // Filed issue here https://github.com/GoogleChrome/puppeteer/issues/2687
     // Catch ad scripts and block them
     await page.setRequestInterception(true);
     page.on('request', (interceptedRequest) => {
@@ -45,9 +46,7 @@ router.get('/screenshot/:url?/:viewportSize?/:fullPage?', async (req, res, next)
     });
 
     await page.setViewport({ width: width, height: height });
-    console.log('viewport set, going to page')
     await page.goto(url, { waitUntil: 'networkidle2', timeout: 10000 });
-    console.log('page gone too')
     const screenshot = await page.screenshot({ fullPage: fullPage });
     await browserPagePool.release(page);
 

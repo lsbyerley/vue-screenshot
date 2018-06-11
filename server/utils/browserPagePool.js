@@ -25,14 +25,12 @@ const browserPagePool = genericPool.createPool(factory, {
 });
 
 process.on('exit', async (code) => {
-  console.log('draining and clearing pool')
   await browserPagePool.drain()
   await browserPagePool.clear()
-  console.log('pools drained and cleared')
 });
 
 process.on('unhandledRejection', (reason, p) => {
-  console.log('Unhandled Rejection: ', reason.name);
+  console.log('Unhandled Rejection: ', reason);
   // application specific logging, throwing an error, or other logic here
 });
 

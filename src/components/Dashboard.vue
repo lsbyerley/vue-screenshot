@@ -14,7 +14,14 @@
     <div class="columns">
       <div class="column is-4">
 
-        <button class="button is-link is-medium is-fullwidth getshot" v-bind:class="getScreenshotButtonClass()" v-on:click="onUrlSubmit" :disabled="!isUrlValid">Get Screenshot</button>
+        <div class="columns">
+          <div class="column is-half">
+            <button class="button is-link is-medium is-fullwidth getshot" v-bind:class="getScreenshotButtonClass()" v-on:click="onUrlSubmit" :disabled="!isUrlValid">Get Screenshot</button>
+          </div>
+          <div class="column is-half">
+            <button class="button is-link is-medium is-fullwidth getshot" v-on:click="clear()">Clear</button>
+          </div>
+        </div>
 
         <div class="card">
           <header class="card-header">
@@ -75,7 +82,7 @@
       <div class="column is-8">
 
         <transition name="tapping-animation" enter-active-class="animated fadeInUp" leave-active-class="animated lightSpeedOut">
-          <div class="card display" v-if="showTapping">
+          <div class="card display tapping" v-if="showTapping">
             <div class="card-content">
               <div class="content">
                 <TappyLoader />
@@ -116,7 +123,7 @@
             </header>
             <div class="card-content">
               <div class="content">
-                <img id="screenshot-img" :src="buildScreenshotSrc()">
+                <img id="screenshot-img" :src="buildScreenshotSrc">
               </div>
             </div>
           </div>
@@ -165,15 +172,6 @@ export default {
     },
     showPlaceholder() {
       return this.screenshot.data.length === 0 && !this.isFetching && !this.errorFetching
-    }
-  },
-  methods: {
-    validateUrl() {
-      this.isUrlValid = urlValidation(this.screenshotUrl)
-    },
-    async onUrlSubmit() {
-      const fullPage = (this.fullpageCheckbox === "Yes") ? true : false;
-      await this.$store.dispatch("getScreenshot", { url: this.screenshotUrl, viewportSize: this.viewportSize, fullPage: fullPage });
     },
     buildScreenshotSrc() {
       if (this.screenshot.data.length > 0) {
@@ -184,6 +182,19 @@ export default {
       } else {
         return ''
       }
+    }
+  },
+  methods: {
+    async onUrlSubmit() {
+      const fullPage = (this.fullpageCheckbox === "Yes") ? true : false;
+      await this.$store.dispatch("getScreenshot", { url: this.screenshotUrl, viewportSize: this.viewportSize, fullPage: fullPage });
+    },
+    clear() {
+      this.inputUrl = ''
+      this.$store.commit("setScreenshot", { screenshot: { data: [], type: '' } });
+    },
+    validateUrl() {
+      this.isUrlValid = urlValidation(this.screenshotUrl)
     },
     downloadScrenshot() {
       const uintArray = new Uint8Array(this.screenshot.data);
@@ -216,10 +227,15 @@ export default {
 }
 
 .getshot {
-  margin-bottom: 2rem;
+  //margin-bottom: 2rem;
 }
 
 .card.display {
+
+  &.tapping {
+    box-shadow: none;
+    background-color: transparent;
+  }
 
   .notification {
     width: 100%;
