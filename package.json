@@ -27,6 +27,7 @@
     "puppeteer": "^1.4.0",
     "sass-loader": "^7.0.1",
     "vue": "^2.5.2",
+    "vue-analytics": "^5.12.2",
     "vue-router": "^3.0.1",
     "vuex": "^3.0.1"
   },

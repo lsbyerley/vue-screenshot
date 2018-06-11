@@ -188,6 +188,11 @@ export default {
     async onUrlSubmit() {
       const fullPage = (this.fullpageCheckbox === "Yes") ? true : false;
       await this.$store.dispatch("getScreenshot", { url: this.screenshotUrl, viewportSize: this.viewportSize, fullPage: fullPage });
+      this.$ga.event({
+        eventCategory: 'buttonSubmit',
+        eventAction: 'getScreenshot',
+        eventValue: this.screenshotUrl
+      })
     },
     clear() {
       this.inputUrl = ''
@@ -200,6 +205,11 @@ export default {
       const uintArray = new Uint8Array(this.screenshot.data);
       const blob = new Blob([uintArray], { type: this.screenshot.type });
       FileSaver.saveAs(blob, "screenshot.png");
+      this.$ga.event({
+        eventCategory: 'buttonSubmit',
+        eventAction: 'downloadScrenshot',
+        eventValue: this.screenshotUrl
+      })
     },
     downloadButtonClass() {
       return {

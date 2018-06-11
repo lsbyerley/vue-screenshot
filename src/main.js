@@ -6,10 +6,24 @@ import App from './App'
 import router from './router'
 import store from './store'
 import Buefy from 'buefy'
+import VueAnalytics from 'vue-analytics'
+
+Vue.config.productionTip = false
 
 Vue.use(Buefy)
 
-Vue.config.productionTip = false
+console.log(process.env.NODE_ENV)
+const isProd = process.env.NODE_ENV !== 'development'
+console.log(isProd)
+
+Vue.use(VueAnalytics, {
+  id: 'UA-114371448-2',
+  router,
+  debug: {
+    enabled: !isProd,
+    sendHitTask: isProd
+  }
+})
 
 /* eslint-disable no-new */
 new Vue({
