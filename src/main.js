@@ -12,9 +12,7 @@ Vue.config.productionTip = false
 
 Vue.use(Buefy)
 
-console.log(process.env.NODE_ENV)
 const isProd = process.env.NODE_ENV !== 'development'
-console.log(isProd)
 
 Vue.use(VueAnalytics, {
   id: 'UA-114371448-2',
