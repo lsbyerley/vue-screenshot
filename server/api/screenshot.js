@@ -45,14 +45,16 @@ router.get('/screenshot/:url?/:viewportSize?/:fullPage?', async (req, res, next)
     });
 
     await page.setViewport({ width: width, height: height });
+    console.log('viewport set, going to page')
     await page.goto(url, { waitUntil: "networkidle0", timeout: 10000 });
+    console.log('page gone too')
     const screenshot = await page.screenshot({ fullPage: fullPage });
     await browserPagePool.release(page);
 
     return res.status(200).json(screenshot);
 
   } catch (err) {
-    console.error(err);
+    console.error('catcherror', err);
     await browserPagePool.release(page);
     return res.status(500).json({ error: "FAILED_SCREENSHOT" });
   }
