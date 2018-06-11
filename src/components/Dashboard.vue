@@ -14,14 +14,7 @@
     <div class="columns">
       <div class="column is-4">
 
-        <div class="columns">
-          <div class="column is-half">
-            <button class="button is-link is-medium is-fullwidth" v-bind:class="getScreenshotButtonClass()" v-on:click="onUrlSubmit" :disabled="!isUrlValid">Get Screenshot</button>
-          </div>
-          <div class="column is-half">
-            <button class="button is-link is-medium is-fullwidth" v-bind:class="downloadButtonClass()" v-on:click="downloadScrenshot" :disabled="!allowDownload">Download</button>
-          </div>
-        </div>
+        <button class="button is-link is-medium is-fullwidth getshot" v-bind:class="getScreenshotButtonClass()" v-on:click="onUrlSubmit" :disabled="!isUrlValid">Get Screenshot</button>
 
         <div class="card">
           <header class="card-header">
@@ -81,38 +74,50 @@
       </div>
       <div class="column is-8">
 
-        <div class="notification is-danger" v-show="errorFetching">
-          Either the request timed out or the url is incorrect. Please try again
-        </div>
-
         <transition name="tapping-animation" enter-active-class="animated fadeInUp" leave-active-class="animated lightSpeedOut">
-          <div class="box screenshot-wrap" v-if="showTapping">
-            <div class="screenshot">
-              <TappyLoader />
+          <div class="card display" v-if="showTapping">
+            <div class="card-content">
+              <div class="content">
+                <TappyLoader />
+              </div>
             </div>
           </div>
         </transition>
 
         <transition name="error-animation" enter-active-class="animated fadeInUp" leave-active-class="animated lightSpeedOut">
-          <div class="box screenshot-wrap" v-if="showError">
-            <div class="screenshot">
-              <img id="screenshot-img-error" src="@/assets/confused-emoji.png">
+          <div class="card display" v-if="showError">
+            <header class="card-header error">
+              <div class="notification is-danger" v-show="errorFetching">
+                Either the request timed out or the url is incorrect. Please try again
+              </div>
+            </header>
+            <div class="card-content">
+              <div class="content">
+                <img id="screenshot-img-error" src="@/assets/confused-emoji.png">
+              </div>
             </div>
           </div>
         </transition>
 
         <transition appear name="placeholder-animation" enter-active-class="animated fadeIn" leave-active-class="animated lightSpeedOut">
-          <div class="box screenshot-wrap" v-if="showPlaceholder">
-            <div class="screenshot">
-              <img id="screenshot-img-placeholder" src="@/assets/screenshot-placeholder.png">
+          <div class="card display" v-if="showPlaceholder">
+            <div class="card-content">
+              <div class="content">
+                <img id="screenshot-img-placeholder" src="@/assets/screenshot-placeholder.png">
+              </div>
             </div>
           </div>
         </transition>
 
         <transition name="screenshot-animation" enter-active-class="animated fadeInUp" leave-active-class="animated lightSpeedOut">
-          <div class="box screenshot-wrap" v-if="showScreenshot">
-            <div class="screenshot">
-              <img id="screenshot-img" :src="buildScreenshotSrc()">
+          <div class="card display" v-if="showScreenshot">
+            <header class="card-header dllink">
+              <button class="button is-link is-medium is-fullwidth" v-bind:class="downloadButtonClass()" v-on:click="downloadScrenshot" :disabled="!allowDownload">Download Screenshot</button>
+            </header>
+            <div class="card-content">
+              <div class="content">
+                <img id="screenshot-img" :src="buildScreenshotSrc()">
+              </div>
             </div>
           </div>
         </transition>
@@ -208,6 +213,28 @@ export default {
 
 .button-pulse {
   animation: radial-pulse 1s infinite;
+}
+
+.getshot {
+  margin-bottom: 2rem;
+}
+
+.card.display {
+
+  .notification {
+    width: 100%;
+  }
+
+  .card-content .content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .card-header.dllink, .card-header.error {
+    padding: 1rem;
+  }
+
 }
 
 @keyframes radial-pulse {

@@ -46,7 +46,7 @@ router.get('/screenshot/:url?/:viewportSize?/:fullPage?', async (req, res, next)
 
     await page.setViewport({ width: width, height: height });
     console.log('viewport set, going to page')
-    await page.goto(url, { waitUntil: "networkidle0", timeout: 10000 });
+    await page.goto(url, { waitUntil: 'networkidle2', timeout: 10000 });
     console.log('page gone too')
     const screenshot = await page.screenshot({ fullPage: fullPage });
     await browserPagePool.release(page);

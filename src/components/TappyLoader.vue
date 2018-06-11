@@ -18,7 +18,7 @@
   position: relative;
   width: 8vw;
   height: 6vw;
-  margin-left: 50%;
+  margin-left: 4rem;
   margin-bottom: 4rem;
   margin-top: 4rem;
 
