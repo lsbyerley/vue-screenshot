@@ -85,7 +85,7 @@
           Either the request timed out or the url is incorrect. Please try again
         </div>
 
-        <transition name="tapping-animation" enter-active-class="animated fadeInUp" leave-active-class="animated bounceOutRight">
+        <transition name="tapping-animation" enter-active-class="animated fadeInUp" leave-active-class="animated lightSpeedOut">
           <div class="box screenshot-wrap" v-if="showTapping">
             <div class="screenshot">
               <TappyLoader />
@@ -93,7 +93,7 @@
           </div>
         </transition>
 
-        <transition name="error-animation" enter-active-class="animated fadeInUp" leave-active-class="animated bounceOutRight">
+        <transition name="error-animation" enter-active-class="animated fadeInUp" leave-active-class="animated lightSpeedOut">
           <div class="box screenshot-wrap" v-if="showError">
             <div class="screenshot">
               <img id="screenshot-img-error" src="@/assets/confused-emoji.png">
@@ -101,7 +101,7 @@
           </div>
         </transition>
 
-        <transition appear name="placeholder-animation" enter-active-class="animated fadeIn" leave-active-class="animated bounceOutRight">
+        <transition appear name="placeholder-animation" enter-active-class="animated fadeIn" leave-active-class="animated lightSpeedOut">
           <div class="box screenshot-wrap" v-if="showPlaceholder">
             <div class="screenshot">
               <img id="screenshot-img-placeholder" src="@/assets/screenshot-placeholder.png">
@@ -109,7 +109,7 @@
           </div>
         </transition>
 
-        <transition name="screenshot-animation" enter-active-class="animated fadeInUp" leave-active-class="animated bounceOutRight">
+        <transition name="screenshot-animation" enter-active-class="animated fadeInUp" leave-active-class="animated lightSpeedOut">
           <div class="box screenshot-wrap" v-if="showScreenshot">
             <div class="screenshot">
               <img id="screenshot-img" :src="buildScreenshotSrc()">
@@ -227,5 +227,9 @@ export default {
   justify-content: center;
   align-items: center;
   background-color: #fafafa;
+}
+
+.animated.lightSpeedOut {
+  animation-duration: 0.5s;
 }
 </style>
