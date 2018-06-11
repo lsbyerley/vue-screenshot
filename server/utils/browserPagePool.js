@@ -8,8 +8,9 @@ const browserPromise = async () => await puppeteer.launch({ headless: true });
 const factory = {
   create: async function() {
     // reuse the same browser instance to create new pages
+    console.log('launching browsers');
     const browser = await browserPromise();
-    console.log('browser promise')
+    console.log('browsers launched')
     return browser.newPage();
   },
   destroy: function(puppeteer) {
@@ -24,9 +25,10 @@ const browserPagePool = genericPool.createPool(factory, {
 });
 
 process.on('exit', async (code) => {
-  console.log('exiting')
+  console.log('draining and clearing pool')
   await browserPagePool.drain()
   await browserPagePool.clear()
+  console.log('pools drained and cleared')
 });
 
 process.on('unhandledRejection', (reason, p) => {

@@ -9,7 +9,7 @@ const isValidViewport = viewport => {
   return validViewports.includes(viewport);
 };
 
-router.get("/screenshot/:url?/:viewportSize?/:fullPage?", async (req, res, next) => {
+router.get('/screenshot/:url?/:viewportSize?/:fullPage?', async (req, res, next) => {
 
   const page = await browserPagePool.acquire();
 
@@ -47,8 +47,10 @@ router.get("/screenshot/:url?/:viewportSize?/:fullPage?", async (req, res, next)
 
     await page.setViewport({ width: width, height: height });
     await page.goto(url, { waitUntil: "networkidle0", timeout: 10000 });
+    console.log('page gone too')
     const screenshot = await page.screenshot({ fullPage: fullPage });
     await browserPagePool.release(page);
+    console.log('page released')
 
     return res.status(200).json(screenshot);
 
