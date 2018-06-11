@@ -3,13 +3,15 @@ const puppeteer = require("puppeteer");
 
 // puppeteer.launch will return a promise to resolve with a browser instance
 //https://gist.github.com/anonymous/c3d9b0d51127ea0bd396432075b2990a
-const browserPromise = async () => await puppeteer.launch({ headless: true });
+//const browserPromise = async () => await puppeteer.launch({ headless: true });
 
 const factory = {
   create: async function() {
     // reuse the same browser instance to create new pages
+
     console.log('launching browsers');
-    const browser = await browserPromise();
+    const browser = await puppeteer.launch({ headless: true });
+    //const browser = await browserPromise();
     console.log('browsers launched')
     return browser.newPage();
   },
