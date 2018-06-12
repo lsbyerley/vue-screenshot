@@ -19,7 +19,7 @@
             <button class="button is-link is-medium is-fullwidth getshot" v-bind:class="getScreenshotButtonClass()" v-on:click="onUrlSubmit" :disabled="!isUrlValid">Get Screenshot</button>
           </div>
           <div class="column is-half">
-            <button class="button is-link is-medium is-fullwidth getshot" v-on:click="clear()">Clear</button>
+            <button class="button is-link is-medium is-fullwidth resetshot" v-on:click="reset()">Reset</button>
           </div>
         </div>
 
@@ -106,7 +106,7 @@
           </div>
         </transition>
 
-        <transition appear name="placeholder-animation" enter-active-class="animated fadeIn" leave-active-class="animated lightSpeedOut">
+        <transition appear name="placeholder-animation" enter-active-class="animated fadeInUp" leave-active-class="animated lightSpeedOut">
           <div class="card display" v-if="showPlaceholder">
             <div class="card-content">
               <div class="content">
@@ -194,8 +194,11 @@ export default {
         eventValue: this.screenshotUrl
       })
     },
-    clear() {
+    reset() {
       this.inputUrl = ''
+      this.fullpageCheckbox = "No"
+      this.urlProtocol = "https"
+      this.viewportSize = "1366x768"
       this.$store.commit("setScreenshot", { screenshot: { data: [], type: '' } });
     },
     validateUrl() {

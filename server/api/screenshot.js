@@ -34,7 +34,7 @@ router.get('/screenshot/:url?/:viewportSize?/:fullPage?', async (req, res, next)
     // TODO: When requesting the same url 3 times, unhandled promise rejection
     // Filed issue here https://github.com/GoogleChrome/puppeteer/issues/2687
     // Catch ad scripts and block them
-    await page.setRequestInterception(true);
+    /*await page.setRequestInterception(true);
     page.on('request', (interceptedRequest) => {
       const reqUrl = interceptedRequest.url()
       if ( isAdUrl(reqUrl) ) {
@@ -43,10 +43,12 @@ router.get('/screenshot/:url?/:viewportSize?/:fullPage?', async (req, res, next)
       } else {
         interceptedRequest.continue();
       }
-    });
+    });*/
 
     await page.setViewport({ width: width, height: height });
-    await page.goto(url, { waitUntil: 'networkidle2', timeout: 10000 });
+    console.time('pagegoto'+url);
+    await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 10000 });
+    console.timeEnd('pagegoto'+url);
     const screenshot = await page.screenshot({ fullPage: fullPage });
     await browserPagePool.release(page);
 

@@ -4,7 +4,8 @@ const blacklistedUrls = [
   'adservice.google.com',
   'securepubads.g.doubleclick.net',
   'ad.doubleclick.net',
-  'cdn.adligature.com'
+  'cdn.adligature.com',
+  'amazon-adsystem.com'
 ]
 
 function isAdUrl(url) {
