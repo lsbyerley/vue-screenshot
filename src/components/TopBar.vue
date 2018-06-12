@@ -16,7 +16,7 @@
         <div class="navbar-end">
           <div class="navbar-item">
             <p class="control">
-            <a class="button is-primary" target="_blank" href="https://twitter.com/share?url=https://vuescreenshot.com&text=Fill out the url, get a screenshot">
+            <a class="button is-primary" target="_blank" href="https://twitter.com/share?url=https://vuescreenshot.com&text=Fill out a url, get a screenshot">
               <b-icon
                 pack="fa"
                 icon="twitter"

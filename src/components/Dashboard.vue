@@ -110,7 +110,7 @@
           <div class="card display" v-if="showPlaceholder">
             <div class="card-content">
               <div class="content">
-                <img id="screenshot-img-placeholder" src="@/assets/screenshot-placeholder.png">
+                <img id="screenshot-img-placeholder" src="/static/screenshot-placeholder.png">
               </div>
             </div>
           </div>
