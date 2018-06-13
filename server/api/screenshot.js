@@ -48,7 +48,7 @@ router.get('/screenshot/:url?/:viewportSize?/:fullPage?', cache(10), async (req,
 
     await page.setViewport({ width: width, height: height });
     console.time('pagegoto'+url);
-    await page.goto(url, { waitUntil: 'networkidle2', timeout: 10000 });
+    await page.goto(url, { waitUntil: 'networkidle2', timeout: 15000 });
     console.timeEnd('pagegoto'+url);
     const screenshot = await page.screenshot({ fullPage: fullPage });
     await browserPagePool.release(page);
