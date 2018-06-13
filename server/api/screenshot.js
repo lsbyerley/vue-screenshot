@@ -2,6 +2,7 @@ const env = process.env.NODE_ENV === "development" ? "development" : "production
 const router = require("express").Router();
 const puppeteer = require("puppeteer");
 const browserPagePool = require("../utils/browserPagePool");
+const cache = require('../utils/cache');
 const { isAdUrl } = require('../utils/util');
 
 const isValidViewport = viewport => {
@@ -9,7 +10,7 @@ const isValidViewport = viewport => {
   return validViewports.includes(viewport);
 };
 
-router.get('/screenshot/:url?/:viewportSize?/:fullPage?', async (req, res, next) => {
+router.get('/screenshot/:url?/:viewportSize?/:fullPage?', cache(100), async (req, res, next) => {
 
   const page = await browserPagePool.acquire();
 

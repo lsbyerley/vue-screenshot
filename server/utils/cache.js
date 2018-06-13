@@ -1,19 +1,21 @@
 const mcache = require("memory-cache");
-const env = process.env.NODE_ENV === "development" ? "development" : "production";
+const is_dev = process.env.NODE_ENV === "development" ? true : false;
+
+console.log(process.env.NODE_ENV, is_dev)
 
 function cache(duration) {
   return (req, res, next) => {
-    const key = "__express-api-cache-__" + req.originalUrl || req.url;
+    const key = "__vuescreenshot-api-cache-__" + req.originalUrl || req.url;
     const cachedBody = mcache.get(key);
 
     if (cachedBody) {
-      if (env === "development") {
+      if (is_dev) {
         console.log("CACHED RESPONSE");
       }
       res.send(cachedBody);
       return;
     } else {
-      if (env === "development") {
+      if (is_dev) {
         console.log("FRESH RESPONSE");
       }
       res.sendResponse = res.send;

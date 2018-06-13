@@ -16,10 +16,10 @@
 
         <div class="columns">
           <div class="column is-half">
-            <button class="button is-link is-medium is-fullwidth getshot" v-bind:class="getScreenshotButtonClass()" v-on:click="onUrlSubmit" :disabled="!isUrlValid">Get Screenshot</button>
+            <button class="button is-link is-medium is-fullwidth resetshot" v-on:click="reset()">Reset</button>
           </div>
           <div class="column is-half">
-            <button class="button is-link is-medium is-fullwidth resetshot" v-on:click="reset()">Reset</button>
+            <button class="button is-link is-medium is-fullwidth getshot" v-bind:class="getScreenshotButtonClass()" v-on:click="onUrlSubmit" :disabled="!isUrlValid">Get Screenshot</button>
           </div>
         </div>
 
@@ -119,7 +119,7 @@
         <transition name="screenshot-animation" enter-active-class="animated fadeInUp" leave-active-class="animated lightSpeedOut">
           <div class="card display" v-if="showScreenshot">
             <header class="card-header dllink">
-              <button class="button is-link is-medium is-fullwidth" v-bind:class="downloadButtonClass()" v-on:click="downloadScrenshot" :disabled="!allowDownload">Download Screenshot</button>
+              <button class="button is-link is-medium" v-bind:class="downloadButtonClass()" v-on:click="downloadScrenshot" :disabled="!allowDownload">Download Screenshot</button>
             </header>
             <div class="card-content">
               <div class="content">
@@ -262,6 +262,9 @@ export default {
 
   .card-header.dllink, .card-header.error {
     padding: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
 }

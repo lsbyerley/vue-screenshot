@@ -10,7 +10,7 @@
 
 <style lang="scss" scoped>
 .footer {
-  background-image: linear-gradient(130deg, #F7FAFC 3%, #DFEBF7 100%);
+  border-top: 4px solid #276cda;
 
   .content {
     text-align: center;
