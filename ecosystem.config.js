@@ -1,7 +1,7 @@
 module.exports = {
   apps : [{
     name: "vue-screenshot",
-    script: "./server/index.js",
+    script: "vue-screenshot/server/index.js",
     env: {
       NODE_ENV: "development",
     },
