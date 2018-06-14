@@ -1,16 +1,13 @@
+// As cool as this idea was, pooling puppeteer pages is worse on memory than just
+// opening and closing new browsers on request
 const genericPool = require("generic-pool");
 const puppeteer = require("puppeteer");
-
-// puppeteer.launch will return a promise to resolve with a browser instance
-//https://gist.github.com/anonymous/c3d9b0d51127ea0bd396432075b2990a
 const browserPromise = async () => await puppeteer.launch({ headless: true });
 
 const factory = {
   create: async function() {
     // reuse the same browser instance to create new pages
-    console.log('launching browsers');
     const browser = await browserPromise();
-    console.log('browsers launched')
     return browser.newPage();
   },
   destroy: function(puppeteer) {
@@ -31,7 +28,6 @@ process.on('exit', async (code) => {
 
 process.on('unhandledRejection', (reason, p) => {
   console.log('Unhandled Rejection: ', reason.code);
-  // application specific logging, throwing an error, or other logic here
 });
 
 module.exports = browserPagePool;

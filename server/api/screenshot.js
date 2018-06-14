@@ -1,7 +1,6 @@
 const env = process.env.NODE_ENV === "development" ? "development" : "production";
 const router = require("express").Router();
 const puppeteer = require("puppeteer");
-//const browserPagePool = require("../utils/browserPagePool");
 const cache = require('../utils/cache');
 const { isAdUrl } = require('../utils/util');
 
@@ -12,7 +11,6 @@ const isValidViewport = viewport => {
 
 router.get('/screenshot/:url?/:viewportSize?/:fullPage?', cache(10), async (req, res, next) => {
 
-  //const page = await browserPagePool.acquire();
   const browser = await puppeteer.launch();
 
   try {
@@ -35,9 +33,6 @@ router.get('/screenshot/:url?/:viewportSize?/:fullPage?', cache(10), async (req,
     );
 
     let blockedReqs = []
-    // TODO: When requesting the same url in a browser thats already handled it, unhandled promise rejection
-    // Filed issue here https://github.com/GoogleChrome/puppeteer/issues/2687
-    // Catch ad scripts and block them
     await page.setRequestInterception(true);
     page.on('request', (interceptedRequest) => {
       const reqUrl = interceptedRequest.url()
@@ -59,14 +54,12 @@ router.get('/screenshot/:url?/:viewportSize?/:fullPage?', cache(10), async (req,
     const screenshot = await page.screenshot({ fullPage: fullPage });
     console.timeEnd('takescreenshot: '+url)
 
-    //await browserPagePool.release(page);
     await browser.close();
 
     return res.status(200).json(screenshot);
 
   } catch (err) {
     console.error('catcherror', err);
-    //await browserPagePool.release(page);
     await browser.close();
     return res.status(500).json({ error: "FAILED_SCREENSHOT" });
   }

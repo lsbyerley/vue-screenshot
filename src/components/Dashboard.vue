@@ -81,7 +81,7 @@
       </div>
       <div class="column is-8">
 
-        <transition name="tapping-animation" enter-active-class="animated fadeInUp" leave-active-class="animated lightSpeedOut">
+        <transition name="tapping-animation" enter-active-class="animated fadeInUp" leave-active-class="animated lightSpeedOut" mode="out-in">
           <div class="card display tapping" v-if="showTapping">
             <div class="card-content">
               <div class="content">
@@ -91,7 +91,7 @@
           </div>
         </transition>
 
-        <transition name="error-animation" enter-active-class="animated fadeInUp" leave-active-class="animated lightSpeedOut">
+        <transition name="error-animation" enter-active-class="animated fadeInUp" leave-active-class="animated lightSpeedOut" mode="out-in">
           <div class="card display" v-if="showError">
             <header class="card-header error">
               <div class="notification is-danger" v-show="errorFetching">
@@ -106,7 +106,7 @@
           </div>
         </transition>
 
-        <transition appear name="placeholder-animation" enter-active-class="animated fadeInUp" leave-active-class="animated lightSpeedOut">
+        <transition appear name="placeholder-animation" enter-active-class="animated fadeInUp" leave-active-class="animated lightSpeedOut" mode="out-in">
           <div class="card display" v-if="showPlaceholder">
             <div class="card-content">
               <div class="content">
@@ -116,7 +116,7 @@
           </div>
         </transition>
 
-        <transition name="screenshot-animation" enter-active-class="animated fadeInUp" leave-active-class="animated lightSpeedOut">
+        <transition name="screenshot-animation" enter-active-class="animated fadeInUp" leave-active-class="animated lightSpeedOut" mode="out-in">
           <div class="card display" v-if="showScreenshot">
             <header class="card-header dllink">
               <button class="button is-link is-medium" v-bind:class="downloadButtonClass()" v-on:click="downloadScrenshot" :disabled="!allowDownload">Download Screenshot</button>
@@ -142,24 +142,27 @@ import FileSaver from 'file-saver';
 import TappyLoader from '@/components/TappyLoader';
 
 export default {
-  name: "Dashboard",
+  name: 'Dashboard',
   components: { TappyLoader },
   data() {
     return {
       isUrlValid: false,
-      fullpageCheckbox: "No",
-      urlProtocol: "https",
-      inputUrl: "",
-      viewportSize: "1366x768"
+      fullpageCheckbox: 'No',
+      urlProtocol: 'https',
+      inputUrl: '',
+      viewportSize: '1366x768'
     };
   },
   computed: {
-    ...mapState(["screenshot", "isFetching", "errorFetching"]),
+    ...mapState(['screenshot', 'isFetching', 'errorFetching']),
+    screenshotEmpty() {
+      return this.screenshot.data.length === 0
+    },
     screenshotUrl() {
-      return this.urlProtocol === "https" ? `https://${this.inputUrl}` : `http://${this.inputUrl}`;
+      return this.urlProtocol === 'https' ? `https://${this.inputUrl}` : `http://${this.inputUrl}`;
     },
     allowDownload() {
-      return this.screenshot.data.length > 0 && this.screenshot.type && !this.errorFetching && !this.isFetching
+      return !this.screenshotEmpty && this.screenshot.type && !this.errorFetching && !this.isFetching
     },
     showTapping() {
       return this.isFetching && !this.errorFetching
@@ -168,13 +171,13 @@ export default {
       return this.errorFetching && !this.isFetching
     },
     showScreenshot() {
-      return this.screenshot.data.length > 0 && !this.isFetching && !this.errorFetching
+      return !this.screenshotEmpty && !this.isFetching && !this.errorFetching
     },
     showPlaceholder() {
-      return this.screenshot.data.length === 0 && !this.isFetching && !this.errorFetching
+      return this.screenshotEmpty && !this.isFetching && !this.errorFetching
     },
     buildScreenshotSrc() {
-      if (this.screenshot.data.length > 0) {
+      if (!this.screenshotEmpty) {
         const uintArray = new Uint8Array(this.screenshot.data);
         const blob = new Blob([uintArray], { type: this.screenshot.type });
         const src = URL.createObjectURL(blob)
@@ -186,37 +189,40 @@ export default {
   },
   methods: {
     async onUrlSubmit() {
-      const fullPage = (this.fullpageCheckbox === "Yes") ? true : false;
-      await this.$store.dispatch("getScreenshot", { url: this.screenshotUrl, viewportSize: this.viewportSize, fullPage: fullPage });
       this.$ga.event({
-        eventCategory: 'buttonSubmit',
-        eventAction: 'getScreenshot',
-        eventValue: this.screenshotUrl
+        eventCategory: 'Button',
+        eventAction: 'Get Screenshot'
       })
+      const fullPage = (this.fullpageCheckbox === 'Yes') ? true : false;
+      await this.$store.dispatch('getScreenshot', { url: this.screenshotUrl, viewportSize: this.viewportSize, fullPage: fullPage });
     },
     reset() {
+      this.$ga.event({
+        eventCategory: 'Button',
+        eventAction: 'Reset'
+      })
       this.inputUrl = ''
-      this.fullpageCheckbox = "No"
-      this.urlProtocol = "https"
-      this.viewportSize = "1366x768"
-      this.$store.commit("setScreenshot", { screenshot: { data: [], type: '' } });
+      this.fullpageCheckbox = 'No'
+      this.urlProtocol = 'https'
+      this.viewportSize = '1366x768'
+      this.$store.commit('setErrorFetching', { errorFetching: false })
+      this.$store.commit('setScreenshot', { screenshot: { data: [], type: '' } });
     },
     validateUrl() {
       this.isUrlValid = urlValidation(this.screenshotUrl)
     },
     downloadScrenshot() {
+      this.$ga.event({
+        eventCategory: 'Button',
+        eventAction: 'Download Screenshot'
+      })
       const uintArray = new Uint8Array(this.screenshot.data);
       const blob = new Blob([uintArray], { type: this.screenshot.type });
-      FileSaver.saveAs(blob, "screenshot.png");
-      this.$ga.event({
-        eventCategory: 'buttonSubmit',
-        eventAction: 'downloadScrenshot',
-        eventValue: this.screenshotUrl
-      })
+      FileSaver.saveAs(blob, 'screenshot.png');
     },
     downloadButtonClass() {
       return {
-        'button-pulse': (this.screenshot.data.length > 0 && !this.isFetching && !this.errorFetching),
+        'button-pulse': (!this.screenshotEmpty && !this.isFetching && !this.errorFetching),
       }
     },
     getScreenshotButtonClass() {
