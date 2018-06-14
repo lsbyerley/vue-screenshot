@@ -30,7 +30,7 @@ process.on('exit', async (code) => {
 });
 
 process.on('unhandledRejection', (reason, p) => {
-  console.log('Unhandled Rejection: ', reason);
+  console.log('Unhandled Rejection: ', reason.code);
   // application specific logging, throwing an error, or other logic here
 });
 

@@ -2,10 +2,11 @@
 const blacklistedUrls = [
   'ib.adnxs.com',
   'adservice.google.com',
-  'securepubads.g.doubleclick.net',
-  'ad.doubleclick.net',
+  'doubleclick.net',
   'cdn.adligature.com',
-  'amazon-adsystem.com'
+  'amazon-adsystem.com',
+  '.com/ad',
+  '.com/ads'
 ]
 
 function isAdUrl(url) {

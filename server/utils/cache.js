@@ -1,8 +1,6 @@
 const mcache = require("memory-cache");
 const is_dev = process.env.NODE_ENV === "development" ? true : false;
 
-console.log(process.env.NODE_ENV, is_dev)
-
 function cache(duration) {
   return (req, res, next) => {
     const key = "__vuescreenshot-api-cache-__" + req.originalUrl || req.url;
