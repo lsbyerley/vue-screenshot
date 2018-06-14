@@ -1,7 +1,7 @@
 const env = process.env.NODE_ENV === "development" ? "development" : "production";
 const router = require("express").Router();
 const puppeteer = require("puppeteer");
-const browserPagePool = require("../utils/browserPagePool");
+//const browserPagePool = require("../utils/browserPagePool");
 const cache = require('../utils/cache');
 const { isAdUrl } = require('../utils/util');
 
@@ -12,7 +12,8 @@ const isValidViewport = viewport => {
 
 router.get('/screenshot/:url?/:viewportSize?/:fullPage?', cache(10), async (req, res, next) => {
 
-  const page = await browserPagePool.acquire();
+  //const page = await browserPagePool.acquire();
+  const browser = await puppeteer.launch();
 
   try {
     if (!req.params.url) throw "url not provided";
@@ -26,6 +27,8 @@ router.get('/screenshot/:url?/:viewportSize?/:fullPage?', cache(10), async (req,
 
     // TODO: URL sanitizing
     const url = decodeURIComponent(req.params.url);
+
+    const page = await browser.newPage();
 
     page.setUserAgent(
       "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36"
@@ -56,13 +59,15 @@ router.get('/screenshot/:url?/:viewportSize?/:fullPage?', cache(10), async (req,
     const screenshot = await page.screenshot({ fullPage: fullPage });
     console.timeEnd('takescreenshot: '+url)
 
-    await browserPagePool.release(page);
+    //await browserPagePool.release(page);
+    await browser.close();
 
     return res.status(200).json(screenshot);
 
   } catch (err) {
     console.error('catcherror', err);
-    await browserPagePool.release(page);
+    //await browserPagePool.release(page);
+    await browser.close();
     return res.status(500).json({ error: "FAILED_SCREENSHOT" });
   }
 });
