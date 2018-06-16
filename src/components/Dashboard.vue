@@ -19,7 +19,21 @@
             <button class="button is-link is-medium is-fullwidth resetshot" v-on:click="reset()">Reset</button>
           </div>
           <div class="column is-half">
-            <button class="button is-link is-medium is-fullwidth getshot" v-bind:class="getScreenshotButtonClass()" v-on:click="onUrlSubmit" :disabled="!isUrlValid">Get Screenshot</button>
+            <button class="button is-link is-medium is-fullwidth getshot" v-bind:class="getScreenshotButtonClass()" v-on:click="onUrlSubmit" :disabled="!allowGetScreenshot">Get Screenshot</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-content">
+            <div class="content">
+              <vue-recaptcha
+                ref="recaptcha"
+                @verify="onVerify"
+                @expired="onExpired"
+                sitekey="6Lf1QF8UAAAAAJQ06P5orEEbBZel9_v8W7PH5v-r">
+              </vue-recaptcha>
+
+            </div>
           </div>
         </div>
 
@@ -132,21 +146,26 @@ import { mapState } from 'vuex';
 import { urlValidation } from '@/utils/util';
 import FileSaver from 'file-saver';
 import TappyLoader from '@/components/TappyLoader';
+import VueRecaptcha from 'vue-recaptcha';
 
 export default {
   name: 'Dashboard',
-  components: { TappyLoader },
+  components: { TappyLoader, VueRecaptcha },
   data() {
     return {
       isUrlValid: false,
       fullpageCheckbox: 'No',
       urlProtocol: 'https',
       inputUrl: '',
-      viewportSize: '1366x768'
+      viewportSize: '1366x768',
+      recaptchaVerified: false
     };
   },
   computed: {
     ...mapState(['screenshot', 'isFetching', 'errorFetching']),
+    allowGetScreenshot() {
+      return this.recaptchaVerified && this.isUrlValid
+    },
     screenshotEmpty() {
       return this.screenshot.data.length === 0
     },
@@ -181,18 +200,24 @@ export default {
   },
   methods: {
     async onUrlSubmit() {
-      this.$ga.event({
-        eventCategory: 'Button',
-        eventAction: 'Get Screenshot'
-      })
-      const fullPage = (this.fullpageCheckbox === 'Yes') ? true : false;
-      await this.$store.dispatch('getScreenshot', { url: this.screenshotUrl, viewportSize: this.viewportSize, fullPage: fullPage });
+      if (this.recaptchaVerified) {
+        this.$ga.event({
+          eventCategory: 'Button',
+          eventAction: 'Get Screenshot'
+        })
+        const fullPage = (this.fullpageCheckbox === 'Yes') ? true : false;
+        this.resetRecaptcha()
+        await this.$store.dispatch('getScreenshot', { url: this.screenshotUrl, viewportSize: this.viewportSize, fullPage: fullPage });
+      }
     },
     reset() {
       this.$ga.event({
         eventCategory: 'Button',
         eventAction: 'Reset'
       })
+      if (!this.recaptchaVerified) {
+        this.resetRecaptcha()
+      }
       this.inputUrl = ''
       this.fullpageCheckbox = 'No'
       this.urlProtocol = 'https'
@@ -219,9 +244,19 @@ export default {
     },
     getScreenshotButtonClass() {
       return {
-        'button-pulse': (urlValidation(this.screenshotUrl) && !this.isFetching && !this.errorFetching),
+        'button-pulse': (urlValidation(this.screenshotUrl) && !this.isFetching && !this.errorFetching && this.recaptchaVerified),
         'is-loading': this.isFetching === true
       }
+    },
+    onVerify: function (response) {
+      this.recaptchaVerified = true
+    },
+    onExpired: function () {
+      this.$refs.recaptcha.reset()
+    },
+    resetRecaptcha () {
+      this.recaptchaVerified = false
+      this.$refs.recaptcha.reset() // Direct call reset method
     }
   }
 };
