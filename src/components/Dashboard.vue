@@ -45,7 +45,7 @@
           </header>
           <div class="card-content">
             <div class="content">
-              <b-field>
+              <b-field class="viewport-select">
                 <b-select v-model="viewportSize" size="is-medium">
                   <option value="320x569">Small - 320x569</option>
                   <option value="360x640">Small - 360x640</option>
@@ -56,16 +56,8 @@
                   <option value="1920x1080">Large - 1920x1080</option>
                 </b-select>
               </b-field>
-            </div>
-          </div>
-        </div>
-        <div class="card">
-          <header class="card-header">
-            <p class="card-header-title">Full Page? (height will be ignored)</p>
-          </header>
-          <div class="card-content">
-            <div class="content">
-              <div class="field">
+              <div class="field fullpage-check">
+                <label class="label">Full Page?</label>
                 <b-checkbox
                   size="is-medium"
                   type="is-info"
@@ -245,8 +237,17 @@ export default {
   animation: radial-pulse 1s infinite;
 }
 
-.getshot {
-  //margin-bottom: 2rem;
+.viewport-select {
+  margin-bottom: 1.5rem;
+}
+
+.fullpage-check {
+  display: flex;
+
+  label.label {
+    margin-right: 1rem;
+    margin-bottom:0;
+  }
 }
 
 .card.display {
