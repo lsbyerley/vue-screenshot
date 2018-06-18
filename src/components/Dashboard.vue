@@ -67,7 +67,7 @@
                   <option value="960x540">Medium - 960x540</option>
                   <option value="1024x640">Large - 1024x640</option>
                   <option value="1366x768">Large - 1366x768</option>
-                  <option value="1366x1200">Large - 1366x1200</option>
+                  <option value="1366x1000">Large - 1366x1000</option>
                   <option value="1920x1080">Large - 1920x1080</option>
                 </b-select>
               </b-field>
@@ -158,7 +158,7 @@ export default {
       fullpageCheckbox: 'No',
       urlProtocol: 'https',
       inputUrl: '',
-      viewportSize: '1366x1200',
+      viewportSize: '1366x1000',
       recaptchaVerified: false
     };
   },
@@ -171,6 +171,13 @@ export default {
       return this.screenshot.data.length === 0
     },
     screenshotUrl() {
+      if ( this.inputUrl.includes('https://') ) {
+        this.inputUrl = this.inputUrl.replace('https://', '')
+        this.urlProtocol = 'https'
+      } else if ( this.inputUrl.includes('http://') ) {
+        this.inputUrl = this.inputUrl.replace('http://', '')
+        this.urlProtocol = 'http'
+      }
       return this.urlProtocol === 'https' ? `https://${this.inputUrl}` : `http://${this.inputUrl}`;
     },
     allowDownload() {

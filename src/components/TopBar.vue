@@ -45,4 +45,8 @@ nav.navbar {
   font-size: 14px;
   font-weight: 700;
 }
+
+.navbar-burger {
+  display: none;
+}
 </style>
