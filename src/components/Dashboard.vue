@@ -67,6 +67,7 @@
                   <option value="960x540">Medium - 960x540</option>
                   <option value="1024x640">Large - 1024x640</option>
                   <option value="1366x768">Large - 1366x768</option>
+                  <option value="1366x1200">Large - 1366x1200</option>
                   <option value="1920x1080">Large - 1920x1080</option>
                 </b-select>
               </b-field>
@@ -157,7 +158,7 @@ export default {
       fullpageCheckbox: 'No',
       urlProtocol: 'https',
       inputUrl: '',
-      viewportSize: '1366x768',
+      viewportSize: '1366x1200',
       recaptchaVerified: false
     };
   },
@@ -203,7 +204,7 @@ export default {
       if (this.recaptchaVerified) {
         this.$ga.event({
           eventCategory: 'Button',
-          eventAction: 'Get Screenshot'
+          eventAction: 'Get Screenshot: ' + this.viewportSize + ' - ' + this.screenshotUrl
         })
         const fullPage = (this.fullpageCheckbox === 'Yes') ? true : false;
         this.resetRecaptcha()

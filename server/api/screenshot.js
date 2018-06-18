@@ -5,7 +5,7 @@ const cache = require('../utils/cache');
 const { isAdUrl } = require('../utils/util');
 
 const isValidViewport = viewport => {
-  const validViewports = ["320x569", "360x640", "480x854", "960x540", "1024x640", "1366x768", "1920x1080"];
+  const validViewports = ["320x569", "360x640", "480x854", "960x540", "1024x640", "1366x768", "1366x1200", "1920x1080"];
   return validViewports.includes(viewport);
 };
 
