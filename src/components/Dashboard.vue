@@ -73,14 +73,12 @@
               </b-field>
               <div class="field fullpage-check">
                 <label class="label">Full Page?</label>
-                <b-checkbox
+                <b-switch v-model="fullpageOption"
                   size="is-medium"
                   type="is-info"
-                  v-model="fullpageCheckbox"
                   true-value="Yes"
                   false-value="No">
-                  {{ fullpageCheckbox }}
-                </b-checkbox>
+                </b-switch>
               </div>
             </div>
           </div>
@@ -88,7 +86,7 @@
       </div>
       <div class="column is-8">
 
-        <transition name="tapping-animation" enter-active-class="animated fadeInUp" leave-active-class="animated lightSpeedOut" mode="out-in">
+        <transition name="tapping-animation" enter-active-class="animated fadeInUp" leave-active-class="animated fadeOutRight" mode="out-in">
           <div class="card display tapping" v-if="showTapping">
             <div class="card-content">
               <div class="content">
@@ -98,7 +96,7 @@
           </div>
         </transition>
 
-        <transition name="error-animation" enter-active-class="animated fadeInUp" leave-active-class="animated lightSpeedOut" mode="out-in">
+        <transition name="error-animation" enter-active-class="animated fadeInUp" leave-active-class="animated fadeOutRight" mode="out-in">
           <div class="card display" v-if="showError">
             <header class="card-header error">
               <div class="notification is-danger" v-show="errorFetching">
@@ -113,7 +111,7 @@
           </div>
         </transition>
 
-        <transition appear name="placeholder-animation" enter-active-class="animated fadeInUp" leave-active-class="animated lightSpeedOut" mode="out-in">
+        <transition appear name="placeholder-animation" enter-active-class="animated fadeInUp" leave-active-class="animated fadeOutRight" mode="out-in">
           <div class="card display" v-if="showPlaceholder">
             <div class="card-content">
               <div class="content">
@@ -123,7 +121,7 @@
           </div>
         </transition>
 
-        <transition name="screenshot-animation" enter-active-class="animated fadeInUp" leave-active-class="animated lightSpeedOut" mode="out-in">
+        <transition name="screenshot-animation" enter-active-class="animated fadeInUp" leave-active-class="animated fadeOutRight" mode="out-in">
           <div class="card display" v-if="showScreenshot">
             <header class="card-header dllink">
               <button class="button is-link is-medium" v-bind:class="downloadButtonClass()" v-on:click="downloadScrenshot" :disabled="!allowDownload">Download Screenshot</button>
@@ -155,7 +153,7 @@ export default {
   data() {
     return {
       isUrlValid: false,
-      fullpageCheckbox: 'No',
+      fullpageOption: 'No',
       urlProtocol: 'https',
       inputUrl: '',
       viewportSize: '1366x1000',
@@ -213,7 +211,7 @@ export default {
           eventCategory: 'Button',
           eventAction: 'Get Screenshot: ' + this.viewportSize + ' - ' + this.screenshotUrl
         })
-        const fullPage = (this.fullpageCheckbox === 'Yes') ? true : false;
+        const fullPage = (this.fullpageOption === 'Yes') ? true : false;
         this.resetRecaptcha()
         await this.$store.dispatch('getScreenshot', { url: this.screenshotUrl, viewportSize: this.viewportSize, fullPage: fullPage });
       }
@@ -227,7 +225,7 @@ export default {
         this.resetRecaptcha()
       }
       this.inputUrl = ''
-      this.fullpageCheckbox = 'No'
+      this.fullpageOption = 'No'
       this.urlProtocol = 'https'
       this.viewportSize = '1366x768'
       this.$store.commit('setErrorFetching', { errorFetching: false })

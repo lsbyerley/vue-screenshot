@@ -9,6 +9,10 @@ const isValidViewport = viewport => {
   return validViewports.includes(viewport);
 };
 
+function wait (ms) {
+  return new Promise(resolve => setTimeout(() => resolve(), ms));
+}
+
 router.get('/screenshot/:url?/:viewportSize?/:fullPage?', cache(10), async (req, res, next) => {
 
   const browser = await puppeteer.launch();
@@ -18,14 +22,15 @@ router.get('/screenshot/:url?/:viewportSize?/:fullPage?', cache(10), async (req,
     if (!isValidViewport(req.params.viewportSize)) throw "invalid viewport size";
 
     let viewport = req.params.viewportSize.split("x"),
-      width = parseInt(viewport[0]),
-      height = parseInt(viewport[1]),
+      vWidth = parseInt(viewport[0]),
+      vHeight = parseInt(viewport[1]),
       fullPage = (req.params.fullPage === "true") ? true : false;
 
 
     // TODO: URL sanitizing
     const url = decodeURIComponent(req.params.url);
 
+    console.time('total')
     const page = await browser.newPage();
 
     page.setUserAgent(
@@ -44,17 +49,49 @@ router.get('/screenshot/:url?/:viewportSize?/:fullPage?', cache(10), async (req,
       }
     });
 
-    await page.setViewport({ width: width, height: height });
+    await page.setViewport({ width: vWidth, height: vHeight });
 
     console.time('pagegoto: '+url);
-    await page.goto(url, { waitUntil: 'networkidle2', timeout: 15000 });
+    await page.goto(url, { waitUntil: 'networkidle2', timeout: 16000 });
     console.timeEnd('pagegoto: '+url);
+
+    if (fullPage) {
+      console.time('lazyload viewport images')
+      //https://www.screenshotbin.com/blog/handling-lazy-loaded-webpages-puppeteer
+      // Get the height of the rendered page
+      const bodyHandle = await page.$('body');
+      const boundingBox = await bodyHandle.boundingBox();
+      const bodyHeight = boundingBox.height
+      await bodyHandle.dispose();
+
+      // Scroll one viewport at a time, pausing to let content load
+      const viewportHeight = page.viewport().height;
+      let viewportIncr = 0;
+
+      while (viewportIncr + viewportHeight < bodyHeight) {
+        await page.evaluate(_viewportHeight => {
+          window.scrollBy(0, _viewportHeight);
+        }, viewportHeight);
+        await wait(500);
+        viewportIncr = viewportIncr + viewportHeight;
+      }
+
+      // Scroll back to top
+      await page.evaluate(_ => {
+        window.scrollTo(0, 0);
+      });
+
+      // Some extra delay to let images load
+      await wait(500);
+      console.timeEnd('lazyload viewport images')
+    }
 
     console.time('takescreenshot: '+url)
     const screenshot = await page.screenshot({ fullPage: fullPage });
     console.timeEnd('takescreenshot: '+url)
 
     await browser.close();
+    console.timeEnd('total')
 
     return res.status(200).json(screenshot);
 
